@@ -92,7 +92,7 @@ const DT = [
 const DEF_CLIENTS = [];
  
 const DEF = { tasks:DT, pipeline:[], clients:DEF_CLIENTS, nid:100 };
-const DEF_CREDS = { user:process.env.NEXT_PUBLIC_ADMIN_USER, pass:process.env.NEXT_PUBLIC_ADMIN_PASS };
+const DEF_CREDS = { user:process.env.NEXT_PUBLIC_ADMIN_USER||"admin", pass:process.env.NEXT_PUBLIC_ADMIN_PASS||"fluxia2025" };
  
 /* ═══ MICRO COMPONENTS ═══ */
 function Logo({s=28}){return <svg width={s} height={s} viewBox="0 0 100 100" fill="none"><defs><linearGradient id="flg" x1="0" y1="100" x2="100" y2="0"><stop offset="0%" stopColor="#e879a8"/><stop offset="50%" stopColor="#c084fc"/><stop offset="100%" stopColor="#60a5fa"/></linearGradient></defs><path d="M50 10C50 10,75 10,80 35C85 60,65 70,50 50C35 70,15 60,20 35C25 10,50 10,50 10Z" stroke="url(#flg)" strokeWidth="3.5" fill="none" opacity=".9"/><path d="M50 90C50 90,75 90,80 65C85 40,65 30,50 50C35 30,15 40,20 65C25 90,50 90,50 90Z" stroke="url(#flg)" strokeWidth="3.5" fill="none" opacity=".9"/><path d="M10 50C10 50,10 25,35 20C60 15,70 35,50 50C70 65,60 85,35 80C10 75,10 50,10 50Z" stroke="url(#flg)" strokeWidth="3.5" fill="none" opacity=".7"/><path d="M90 50C90 50,90 25,65 20C40 15,30 35,50 50C30 65,40 85,65 80C90 75,90 50,90 50Z" stroke="url(#flg)" strokeWidth="3.5" fill="none" opacity=".7"/></svg>}
@@ -149,9 +149,9 @@ export default function FluxiaApp() {
   const [ncRut,setNcRut]=useState("");const[ncMrr,setNcMrr]=useState("");
  
   useEffect(()=>{
-    Promise.all([loadStore(),loadAuth()]).then(([d,a])=>{
+    Promise.all([loadStore(),loadAuth()]).then(([d])=>{
       setData(d||DEF);
-      setAuth(a||DEF_CREDS);
+      setAuth(DEF_CREDS);
       setLoading(false);
     });
     const h=()=>setSc(window.scrollY>40);window.addEventListener("scroll",h);return()=>window.removeEventListener("scroll",h);
