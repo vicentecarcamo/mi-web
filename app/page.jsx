@@ -306,7 +306,6 @@ export default function FluxiaApp() {
         {/* Footer */}
         <footer style={{borderTop:"1px solid rgba(255,255,255,.06)",padding:"36px 0 20px",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:16}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}><Logo s={22}/><div><span style={{fontSize:14,fontWeight:600,color:"#d1d5db"}}>Fluxia SpA</span><p style={{fontSize:11,color:"#4b5563",margin:"2px 0 0"}}>ERP, CRM & Automatización con IA · Santiago, Chile</p></div></div>
-          <div style={{fontSize:11,color:"#4b5563"}}>agencia.fluxia.spa@gmail.com · fluxia.cl</div>
         </footer>
       </div>
  
