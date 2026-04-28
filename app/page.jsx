@@ -135,7 +135,7 @@ export default function FluxiaApp() {
   const [clientTab, setClientTab] = useState("dashboard");
   // Forms
   const [nt,setNt]=useState("");const[np,setNp]=useState("media");const[nph,setNph]=useState("Fase 1");
-  const [dn,setDn]=useState("");const[db,setDb]=useState("");const[dv,setDv]=useState("");const[di,setDi]=useState("");const[ds,setDs]=useState("Clínica");
+  const [dn,setDn]=useState("");const[db,setDb]=useState("");const[dv,setDv]=useState("");const[di,setDi]=useState("");const[ds,setDs]=useState("Clínica");const[dClientId,setDClientId]=useState("");
   // Landing
   const [formData,setFD]=useState({name:"",business:"",phone:"",message:""});
   const [formPlan,setFormPlan]=useState("");const[formSector,setFormSector]=useState("");
@@ -147,6 +147,10 @@ export default function FluxiaApp() {
   const [ncName,setNcName]=useState("");const[ncContact,setNcContact]=useState("");const[ncPlan,setNcPlan]=useState("Esencial");
   const [ncSector,setNcSector]=useState("Clínica");const[ncEmail,setNcEmail]=useState("");const[ncPhone,setNcPhone]=useState("");
   const [ncRut,setNcRut]=useState("");const[ncMrr,setNcMrr]=useState("");
+  const [addingLead,setAddingLead]=useState(false);
+  const [ldName,setLdName]=useState("");const[ldService,setLdService]=useState("");const[ldSrc,setLdSrc]=useState("WhatsApp");const[ldStatus,setLdStatus]=useState("warm");
+  const [addingInvoice,setAddingInvoice]=useState(false);
+  const [invMonth,setInvMonth]=useState("");const[invAmount,setInvAmount]=useState("");
  
   useEffect(()=>{
     Promise.all([loadStore(),loadAuth()]).then(([d])=>{
@@ -389,15 +393,24 @@ export default function FluxiaApp() {
         {/* PIPELINE */}
         {page==="pipeline"&&<>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}><h1 style={{fontSize:20,fontWeight:700,margin:0}}>Pipeline de ventas</h1><Btn primary onClick={()=>setAddingDeal(true)}>+ Deal</Btn></div>
-          {addingDeal&&<Card style={{marginBottom:14,maxWidth:380}}>
-            <Input value={dn} onChange={setDn} placeholder="Nombre contacto..." style={{marginBottom:5}}/>
-            <Input value={db} onChange={setDb} placeholder="Nombre negocio..." style={{marginBottom:5}}/>
-            <div style={{display:"flex",gap:6,marginBottom:5}}>
+          {addingDeal&&<Card style={{marginBottom:14,maxWidth:420}}>
+            <div style={{fontSize:13,fontWeight:600,color:C.t1,marginBottom:10}}>Nuevo deal</div>
+            {clients.length>0&&<div style={{marginBottom:10}}>
+              <label style={{display:"block",fontSize:10,color:C.t3,marginBottom:4}}>Cargar desde cliente existente</label>
+              <select value={dClientId} onChange={e=>{const id=e.target.value;setDClientId(id);if(id){const cl=clients.find(c=>c.id===id);if(cl){setDn(cl.contact||cl.name);setDb(cl.name);setDv(String(cl.mrr||""));setDs(cl.sector||"Clínica")}}else{setDn("");setDb("");setDv("");setDs("Clínica")}}} style={{width:"100%",padding:"9px 12px",background:"rgba(255,255,255,.04)",border:`1px solid ${C.bdr}`,borderRadius:8,color:dClientId?C.t1:C.t3,fontSize:12,outline:"none",fontFamily:"inherit",cursor:"pointer",appearance:"none",WebkitAppearance:"none"}}>
+                <option value="" style={{background:"#0d0d18",color:C.t2}}>— Nuevo prospecto (manual) —</option>
+                {clients.map(cl=><option key={cl.id} value={cl.id} style={{background:"#0d0d18",color:C.t1}}>{cl.name} · Plan {cl.plan} · ${cl.mrr>0?cl.mrr.toLocaleString("es-CL"):"—"}/mes</option>)}
+              </select>
+            </div>}
+            <div style={{height:1,background:C.bdr,margin:"4px 0 10px"}}/>
+            <Input value={dn} onChange={setDn} placeholder="Nombre contacto *" style={{marginBottom:6}}/>
+            <Input value={db} onChange={setDb} placeholder="Nombre negocio" style={{marginBottom:6}}/>
+            <div style={{display:"flex",gap:6,marginBottom:6}}>
               <div style={{flex:1}}><label style={{display:"block",fontSize:10,color:C.t3,marginBottom:3}}>Mensualidad CLP</label><Input value={dv} onChange={setDv} placeholder="Ej: 180000" type="number"/></div>
               <div style={{flex:1}}><label style={{display:"block",fontSize:10,color:C.t3,marginBottom:3}}>Implementación CLP</label><Input value={di} onChange={setDi} placeholder="Ej: 500000" type="number"/></div>
             </div>
-            <div style={{display:"flex",gap:3,marginBottom:8,flexWrap:"wrap"}}>{["Clínica","Psicólogo","Gimnasio","Restaurante","Estética","Otro"].map(s=><button key={s} onClick={()=>setDs(s)} style={{fontSize:10,padding:"3px 7px",borderRadius:5,border:ds===s?`1px solid ${C.vi}`:`1px solid ${C.bdr}`,background:ds===s?"rgba(139,92,246,.12)":"transparent",color:ds===s?C.vi:C.t2,cursor:"pointer",fontFamily:"inherit"}}>{s}</button>)}</div>
-            <div style={{display:"flex",gap:6}}><Btn primary onClick={()=>{if(dn.trim()){up(d=>{d.pipeline.push({id:`d${d.nid++}`,name:dn.trim(),business:db,value:parseInt(dv)||0,impl:parseInt(di)||0,sector:ds,col:"Lead"})});setDn("");setDb("");setDv("");setDi("");setAddingDeal(false)}}}>Crear</Btn><Btn onClick={()=>setAddingDeal(false)}>Cancelar</Btn></div>
+            <div style={{marginBottom:10}}><label style={{display:"block",fontSize:10,color:C.t3,marginBottom:4}}>Sector</label><div style={{display:"flex",gap:3,flexWrap:"wrap"}}>{["Clínica","Psicólogo","Gimnasio","Restaurante","Estética","Retail","Otro"].map(s=><button key={s} onClick={()=>setDs(s)} style={{fontSize:10,padding:"3px 7px",borderRadius:5,border:ds===s?`1px solid ${C.vi}`:`1px solid ${C.bdr}`,background:ds===s?"rgba(139,92,246,.12)":"transparent",color:ds===s?C.vi:C.t2,cursor:"pointer",fontFamily:"inherit"}}>{s}</button>)}</div></div>
+            <div style={{display:"flex",gap:6}}><Btn primary onClick={()=>{if(dn.trim()){up(d=>{d.pipeline.push({id:`d${d.nid++}`,name:dn.trim(),business:db,value:parseInt(dv)||0,impl:parseInt(di)||0,sector:ds,col:"Lead",clientId:dClientId||null})});setDn("");setDb("");setDv("");setDi("");setDs("Clínica");setDClientId("");setAddingDeal(false)}}}>Crear deal</Btn><Btn onClick={()=>{setAddingDeal(false);setDClientId("");setDn("");setDb("");setDv("");setDi("")}}>Cancelar</Btn></div>
           </Card>}
           <div style={{display:"grid",gridTemplateColumns:`repeat(${PC.length},1fr)`,gap:8}}>
             {PC.map(col=>{const deals=pipeline.filter(d=>d.col===col);return <div key={col}><div style={{display:"flex",alignItems:"center",gap:5,marginBottom:8,padding:"0 4px"}}><Dot color={stgC[col]}/><span style={{fontSize:12,fontWeight:600,color:C.t1}}>{col}</span><span style={{fontSize:10,color:C.t3,background:"rgba(255,255,255,.05)",padding:"1px 6px",borderRadius:8}}>{deals.length}</span></div><div style={{minHeight:60}}>{deals.map(d=><Card key={d.id} style={{marginBottom:7}}><div style={{display:"flex",justifyContent:"space-between"}}><div><div style={{fontSize:13,fontWeight:600,color:C.t1}}>{d.name}</div><div style={{fontSize:11,color:C.t2}}>{d.business}</div></div><div style={{display:"flex",gap:4}}><button onClick={()=>{const nx=PC[(PC.indexOf(d.col)+1)%PC.length];up(dt=>{const dl=dt.pipeline.find(x=>x.id===d.id);if(dl)dl.col=nx})}} style={{background:"none",border:"none",color:C.t3,cursor:"pointer",fontSize:12}}>→</button><button onClick={()=>up(dt=>{dt.pipeline=dt.pipeline.filter(x=>x.id!==d.id)})} style={{background:"none",border:"none",color:C.t3,cursor:"pointer",fontSize:14,lineHeight:1}} onMouseEnter={e=>e.currentTarget.style.color=C.red} onMouseLeave={e=>e.currentTarget.style.color=C.t3}>×</button></div></div><div style={{marginTop:6}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:3}}><span style={{fontSize:10,color:C.t3}}>Mensualidad</span><span style={{fontSize:13,fontWeight:700,color:stgC[d.col]||C.vi}}>${d.value>0?d.value.toLocaleString("es-CL"):"—"}</span></div><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:5}}><span style={{fontSize:10,color:C.t3}}>Implementación</span><span style={{fontSize:13,fontWeight:600,color:C.gold}}>${d.impl>0?d.impl.toLocaleString("es-CL"):"—"}</span></div><Badge text={d.sector} color={C.t2}/></div></Card>)}</div></div>})}
@@ -423,7 +436,7 @@ export default function FluxiaApp() {
               </div>
               <div style={{marginBottom:8}}>
                 <label style={{display:"block",fontSize:11,color:C.t2,marginBottom:4,fontWeight:500}}>Plan contratado</label>
-                <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>{["Esencial","Profesional","Empresa"].map(p=><button key={p} onClick={()=>setNcPlan(p)} style={{fontSize:11,padding:"4px 10px",borderRadius:6,border:ncPlan===p?`1px solid ${C.vi}`:`1px solid ${C.bdr}`,background:ncPlan===p?"rgba(139,92,246,.12)":"transparent",color:ncPlan===p?C.vi:C.t2,cursor:"pointer",fontFamily:"inherit"}}>{p}</button>)}</div>
+                <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>{["Esencial","Profesional","Empresa"].map(p=><button key={p} onClick={()=>{setNcPlan(p);const pm={"Esencial":"120000","Profesional":"180000","Empresa":"300000"};setNcMrr(pm[p]||"")}} style={{fontSize:11,padding:"4px 10px",borderRadius:6,border:ncPlan===p?`1px solid ${C.vi}`:`1px solid ${C.bdr}`,background:ncPlan===p?"rgba(139,92,246,.12)":"transparent",color:ncPlan===p?C.vi:C.t2,cursor:"pointer",fontFamily:"inherit"}}>{p}<span style={{display:"block",fontSize:9,color:ncPlan===p?C.vi:C.t3,fontWeight:400}}>{"Esencial"===p?"$120k":"Profesional"===p?"$180k":"$300k"}/mes</span></button>)}</div>
               </div>
               <div style={{marginBottom:12}}>
                 <label style={{display:"block",fontSize:11,color:C.t2,marginBottom:4,fontWeight:500}}>Sector</label>
@@ -454,9 +467,83 @@ export default function FluxiaApp() {
               {clientTab==="dashboard"&&<><div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:16}}><Stat label="Conversaciones" value={cl.bot?.conversations||0}/><Stat label="Leads" value={cl.bot?.leads||0} color={C.vi}/><Stat label="Citas" value={cl.bot?.appointments||0} color={C.green}/><Stat label="Respuesta" value={cl.bot?.responseTime||"—"} color={C.gold}/></div>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 260px",gap:12}}><Card><div style={{fontSize:13,fontWeight:600,marginBottom:12}}>Actividad semanal</div><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}><div><div style={{fontSize:10,color:C.t3,marginBottom:4}}>Conversaciones</div><MiniChart data={cl.weeklyData} dk="conv" color={C.vi}/></div><div><div style={{fontSize:10,color:C.t3,marginBottom:4}}>Citas</div><MiniChart data={cl.weeklyData} dk="apt" color={C.green}/></div></div></Card>
                   <Card><div style={{fontSize:13,fontWeight:600,marginBottom:12}}>Estado bot</div>{[{l:"Uptime",v:`${cl.bot?.uptime}%`},{l:"Respuesta",v:cl.bot?.responseTime},{l:"Modelo",v:"GPT-4o mini"},{l:"Memoria",v:"Activada"}].map((r,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:i<3?`1px solid ${C.bdr}`:"none",fontSize:12}}><span style={{color:C.t2}}>{r.l}</span><span style={{color:C.t1,fontWeight:500}}>{r.v}</span></div>)}</Card></div></>}
-              {clientTab==="leads"&&<Card>{(cl.recentLeads||[]).map((ld,i)=><div key={i} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 0",borderBottom:i<(cl.recentLeads||[]).length-1?`1px solid ${C.bdr}`:"none",flexWrap:"wrap",gap:6}}><div style={{display:"flex",alignItems:"center",gap:8}}><div style={{width:28,height:28,borderRadius:"50%",background:"rgba(255,255,255,.06)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:600,color:C.t2}}>{ld.name.split(" ").map(n=>n[0]).join("")}</div><div><div style={{fontSize:12,fontWeight:500,color:C.t1}}>{ld.name}</div><div style={{fontSize:10,color:C.t3}}>{ld.service}</div></div></div><div style={{display:"flex",alignItems:"center",gap:6}}><span style={{fontSize:10,color:C.t3}}>{ld.src}</span><LeadBadge status={ld.status}/><span style={{fontSize:10,color:C.t3}}>{ld.time}</span></div></div>)}</Card>}
-              {clientTab==="services"&&<Card>{["Landing Page","CRM + Dashboard","Bot WhatsApp + IA","Agenda IA","SEO"].map((s,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:i<4?`1px solid ${C.bdr}`:"none",fontSize:12}}><div style={{display:"flex",alignItems:"center",gap:6}}><Dot color={C.green}/><span style={{color:C.t1}}>{s}</span></div><Badge text={i<3?"ERP":"Web"} color={i<3?C.vi:C.blue}/></div>)}</Card>}
-              {clientTab==="billing"&&<Card>{(cl.invoices||[]).map((inv,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:i<(cl.invoices||[]).length-1?`1px solid ${C.bdr}`:"none"}}><span style={{fontSize:13,fontWeight:500,color:C.t1}}>{inv.month}</span><div style={{display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:14,fontWeight:700}}>${inv.amount?.toLocaleString("es-CL")}</span><Badge text="Pagado" color={C.green}/></div></div>)}</Card>}
+              {clientTab==="leads"&&<div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+                  <span style={{fontSize:13,fontWeight:600,color:C.t1}}>Leads <span style={{fontSize:11,color:C.t3,fontWeight:400}}>({(cl.recentLeads||[]).length})</span></span>
+                  <Btn primary onClick={()=>setAddingLead(!addingLead)}>{addingLead?"Cancelar":"+ Agregar lead"}</Btn>
+                </div>
+                {addingLead&&<Card style={{marginBottom:10}}>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:8}}>
+                    <div><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:3}}>Nombre *</label><Input value={ldName} onChange={setLdName} placeholder="Ej: María González"/></div>
+                    <div><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:3}}>Servicio de interés</label><Input value={ldService} onChange={setLdService} placeholder="Ej: Bot WhatsApp"/></div>
+                  </div>
+                  <div style={{display:"flex",gap:10,marginBottom:10,flexWrap:"wrap"}}>
+                    <div><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:4}}>Fuente</label><div style={{display:"flex",gap:4,flexWrap:"wrap"}}>{["WhatsApp","Web","Referido","Instagram","Otro"].map(s=><button key={s} onClick={()=>setLdSrc(s)} style={{fontSize:10,padding:"3px 8px",borderRadius:5,border:ldSrc===s?`1px solid ${C.blue}`:`1px solid ${C.bdr}`,background:ldSrc===s?"rgba(96,165,250,.12)":"transparent",color:ldSrc===s?C.blue:C.t2,cursor:"pointer",fontFamily:"inherit"}}>{s}</button>)}</div></div>
+                    <div><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:4}}>Temperatura</label><div style={{display:"flex",gap:4}}>{[["hot","Hot 🔥"],["warm","Warm ☀️"],["cold","Cold 🧊"]].map(([v,l])=><button key={v} onClick={()=>setLdStatus(v)} style={{fontSize:10,padding:"3px 8px",borderRadius:5,border:ldStatus===v?`1px solid ${C.gold}`:`1px solid ${C.bdr}`,background:ldStatus===v?"rgba(251,191,36,.12)":"transparent",color:ldStatus===v?C.gold:C.t2,cursor:"pointer",fontFamily:"inherit"}}>{l}</button>)}</div></div>
+                  </div>
+                  <Btn primary onClick={()=>{if(ldName.trim()){up(d=>{const c2=d.clients.find(x=>x.id===selectedClient);if(c2){(c2.recentLeads=c2.recentLeads||[]).push({name:ldName.trim(),service:ldService||"—",src:ldSrc,status:ldStatus,time:new Date().toLocaleDateString("es-CL",{day:"2-digit",month:"short"})});c2.bot=c2.bot||{};c2.bot.leads=(c2.bot.leads||0)+1}});setLdName("");setLdService("");setLdSrc("WhatsApp");setLdStatus("warm");setAddingLead(false)}}}>Guardar lead</Btn>
+                </Card>}
+                <Card>
+                  {(cl.recentLeads||[]).length===0
+                    ?<div style={{textAlign:"center",padding:"24px 0"}}><div style={{fontSize:28,marginBottom:8}}>📭</div><div style={{fontSize:12,color:C.t3}}>Sin leads aún. Agrega el primero con el botón superior.</div></div>
+                    :[...(cl.recentLeads||[])].reverse().map((ld,i,arr)=><div key={i} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 0",borderBottom:i<arr.length-1?`1px solid ${C.bdr}`:"none",flexWrap:"wrap",gap:6}}>
+                      <div style={{display:"flex",alignItems:"center",gap:8}}>
+                        <div style={{width:28,height:28,borderRadius:"50%",background:"rgba(255,255,255,.06)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:600,color:C.t2}}>{ld.name.split(" ").map(n=>n[0]).join("")}</div>
+                        <div><div style={{fontSize:12,fontWeight:500,color:C.t1}}>{ld.name}</div><div style={{fontSize:10,color:C.t3}}>{ld.service} · {ld.src}</div></div>
+                      </div>
+                      <div style={{display:"flex",alignItems:"center",gap:6}}><LeadBadge status={ld.status}/><span style={{fontSize:10,color:C.t3}}>{ld.time}</span></div>
+                    </div>)
+                  }
+                </Card>
+              </div>}
+              {clientTab==="services"&&<div>
+                <div style={{fontSize:12,color:C.t2,marginBottom:8}}>Servicios incluidos en el Plan <span style={{color:C.vi,fontWeight:600}}>{cl.plan}</span></div>
+                <Card style={{marginBottom:10}}>
+                  {(PRICING.find(p=>p.name===cl.plan)?.features||[]).map((s,i,arr)=><div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"7px 0",borderBottom:i<arr.length-1?`1px solid ${C.bdr}`:"none",fontSize:12}}><span style={{color:C.green,fontWeight:700,fontSize:13}}>✓</span><span style={{color:C.t1}}>{s}</span></div>)}
+                </Card>
+                <div style={{fontSize:12,color:C.t2,marginBottom:8}}>Estado del sistema</div>
+                <Card>
+                  {[
+                    {l:"Bot WhatsApp + IA",v:"Activo",c:C.green},
+                    {l:"Dashboard métricas",v:"Activo",c:C.green},
+                    {l:"CRM básico",v:"Activo",c:C.green},
+                    {l:"Landing Page",v:"Activo",c:C.green},
+                    {l:"ERP completo",v:cl.plan==="Esencial"?"No incluido":"Activo",c:cl.plan==="Esencial"?C.t3:C.green},
+                    {l:"Portal cliente",v:cl.plan==="Esencial"?"No incluido":"Activo",c:cl.plan==="Esencial"?C.t3:C.green},
+                  ].map((r,i,arr)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:i<arr.length-1?`1px solid ${C.bdr}`:"none",fontSize:12}}>
+                    <span style={{color:C.t2}}>{r.l}</span>
+                    <div style={{display:"flex",alignItems:"center",gap:5}}><Dot color={r.c}/><span style={{color:r.c,fontWeight:500}}>{r.v}</span></div>
+                  </div>)}
+                </Card>
+              </div>}
+              {clientTab==="billing"&&<div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+                  <div><span style={{fontSize:13,fontWeight:600,color:C.t1}}>Facturación</span><span style={{fontSize:11,color:C.t3,marginLeft:8}}>MRR: <span style={{color:C.green,fontWeight:600}}>${(cl.mrr||0).toLocaleString("es-CL")}</span>/mes</span></div>
+                  <Btn primary onClick={()=>setAddingInvoice(!addingInvoice)}>{addingInvoice?"Cancelar":"+ Registrar pago"}</Btn>
+                </div>
+                {addingInvoice&&<Card style={{marginBottom:10}}>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:8}}>
+                    <div><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:3}}>Mes *</label><Input value={invMonth} onChange={setInvMonth} placeholder={`Ej: ${new Date().toLocaleDateString("es-CL",{month:"long",year:"numeric"})}`}/></div>
+                    <div><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:3}}>Monto CLP</label><Input value={invAmount} onChange={setInvAmount} placeholder={String(cl.mrr||0)} type="number"/></div>
+                  </div>
+                  <Btn primary onClick={()=>{if(invMonth.trim()){up(d=>{const c2=d.clients.find(x=>x.id===selectedClient);if(c2)(c2.invoices=c2.invoices||[]).push({month:invMonth.trim(),amount:parseInt(invAmount)||c2.mrr||0,date:new Date().toLocaleDateString("es-CL",{day:"2-digit",month:"short",year:"numeric"})})});setInvMonth("");setInvAmount("");setAddingInvoice(false)}}}>Guardar pago</Btn>
+                </Card>}
+                <Card>
+                  {(cl.invoices||[]).length===0
+                    ?<div style={{textAlign:"center",padding:"24px 0"}}><div style={{fontSize:28,marginBottom:8}}>🧾</div><div style={{fontSize:12,color:C.t3}}>Sin pagos registrados. Agrega el primero con el botón superior.</div></div>
+                    :<>
+                      {[...(cl.invoices||[])].reverse().map((inv,i,arr)=><div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:i<arr.length-1?`1px solid ${C.bdr}`:"none"}}>
+                        <div><div style={{fontSize:13,fontWeight:500,color:C.t1}}>{inv.month}</div>{inv.date&&<div style={{fontSize:10,color:C.t3,marginTop:1}}>{inv.date}</div>}</div>
+                        <div style={{display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:14,fontWeight:700,color:C.t1}}>${inv.amount?.toLocaleString("es-CL")}</span><Badge text="Pagado" color={C.green}/></div>
+                      </div>)}
+                      <div style={{marginTop:10,paddingTop:10,borderTop:`1px solid ${C.bdr}`,display:"flex",justifyContent:"space-between",fontSize:12}}>
+                        <span style={{color:C.t2}}>Total facturado</span>
+                        <span style={{color:C.green,fontWeight:700}}>${(cl.invoices||[]).reduce((s,inv)=>s+(inv.amount||0),0).toLocaleString("es-CL")}</span>
+                      </div>
+                    </>
+                  }
+                </Card>
+              </div>}
             </>})()}
           </>}
         </>}
