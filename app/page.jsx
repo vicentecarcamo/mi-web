@@ -91,7 +91,7 @@ const DT = [
  
 const DEF_CLIENTS = [];
  
-const DEF = { tasks:DT, pipeline:[], clients:DEF_CLIENTS, nid:100 };
+const DEF = { tasks:DT, pipeline:[], clients:DEF_CLIENTS, nid:100, content:[], trades:[], bootcamp:{} };
 const DEF_CREDS = { user:process.env.NEXT_PUBLIC_ADMIN_USER||"admin", pass:process.env.NEXT_PUBLIC_ADMIN_PASS||"fluxia2025" };
  
 /* ═══ MICRO COMPONENTS ═══ */
@@ -117,6 +117,31 @@ const ERP_MODS=[{n:"Ventas y CRM",d:"Pipeline, leads, seguimiento",i:"📈"},{n:
 const PRICING=[{name:"Esencial",pr:"150.000",pl:"120.000",setup:"300k–450k",features:["Landing page con dominio propio","CRM básico con clasificación IA","Bot WhatsApp + IA 24/7","Dashboard de métricas","Facturación básica SII"],pop:false},{name:"Profesional",pr:"220.000",pl:"180.000",setup:"500k–800k",features:["Todo lo del Esencial","ERP: ventas + finanzas + agenda","CRM con pipeline automático","Portal de cliente exclusivo","Reportes mensuales de ROI","3 módulos a elegir"],pop:true},{name:"Empresa",pr:"380.000",pl:"300.000",setup:"900k–1.8M",features:["Todo lo del Profesional","ERP completo, todos los módulos","Integraciones custom","Inventario + control stock","Automatización multi-canal","SLA prioritario < 2 hrs"],pop:false}];
 const FAQS=[{q:"¿Qué diferencia tiene con un SAP?",a:"Nuestro ERP es liviano, se implementa en 7 días, cuesta una fracción e incluye IA. No necesitas departamento de TI."},{q:"¿Puedo empezar con pocos módulos?",a:"Sí. Empieza con lo que necesitas hoy y activa más módulos cuando crezcas."},{q:"¿Cuánto tarda la implementación?",a:"5-10 días hábiles. En la primera semana ya tienes tu sistema funcionando."},{q:"¿Hay permanencia mínima?",a:"No. Si el primer mes no ves resultados, devolvemos tu dinero."},{q:"¿Se integra con facturación SII?",a:"Sí. Emite boletas y facturas electrónicas directamente desde tu ERP."},{q:"¿Mis datos están seguros?",a:"Servidores privados con encriptación y backups diarios. Cumplimos Ley 19.628."}];
 const SECTORS=[{n:"Clínicas y dentistas",p:"Agenda caótica + pacientes perdidos + facturación manual"},{n:"Psicólogos y coaches",p:"Agenda, pagos y fichas en 5 herramientas distintas"},{n:"Gimnasios y academias",p:"Cobranza manual, sin métricas de retención"},{n:"Restaurantes y cafés",p:"Reservas por teléfono, sin control de inventario"},{n:"Centros estéticos",p:"Agendamiento repetitivo, seguimiento sin sistema"},{n:"Retail y e-commerce",p:"Inventario desconectado de ventas"}];
+
+const DEMOS_CATALOG=[
+  {id:"dm1",niche:"Clínicas",icon:"🏥",color:"#818cf8",demo:"ERP + Agenda médica",type:"ERP",status:"construido",desc:"Citas, fichas de pacientes y facturación SII integrada."},
+  {id:"dm2",niche:"Psicólogos",icon:"🧠",color:"#c084fc",demo:"Agenda + fichas + pagos",type:"ERP",status:"construido",desc:"Sesiones, fichas confidenciales y cobros automáticos."},
+  {id:"dm3",niche:"Gimnasios",icon:"🏋️",color:"#4ade80",demo:"Membresías + cobranza",type:"ERP",status:"en progreso",desc:"Control de socios, cuotas y recordatorios de pago."},
+  {id:"dm4",niche:"Restaurantes",icon:"🍽️",color:"#f97316",demo:"Reservas + inventario",type:"ERP",status:"pendiente",desc:"Reservas online y control de insumos en tiempo real."},
+  {id:"dm5",niche:"Estética",icon:"💆",color:"#e879a8",demo:"Agenda + fidelización",type:"ERP",status:"en progreso",desc:"Citas, historial de tratamientos y programa de puntos."},
+  {id:"dm6",niche:"Retail",icon:"🛍️",color:"#fbbf24",demo:"CRM + cuenta corriente",type:"CRM",status:"construido",desc:"Clientas, cuentas corrientes y cobranza automatizada."},
+  {id:"dm7",niche:"Bot WhatsApp",icon:"⚡",color:"#60a5fa",demo:"Atención IA 24/7",type:"Bot",status:"construido",desc:"Responde, agenda y registra leads sin intervención humana."},
+  {id:"dm8",niche:"Landing Page",icon:"🌐",color:"#34d399",demo:"Vitrina digital + dominio",type:"Web",status:"construido",desc:"Landing profesional conectada al ERP del cliente."},
+];
+const platC={Instagram:"#e879a8",LinkedIn:"#60a5fa",TikTok:"#f87171","WhatsApp":"#4ade80",Blog:"#fbbf24"};
+const contStC={idea:{c:"#6366f1",label:"Idea"},redactado:{c:"#fbbf24",label:"Redactado"},publicado:{c:"#4ade80",label:"Publicado"}};
+const CONT_COLS=["Idea","Redactando","Listo","Publicado"];
+const CONT_COL_C={"Idea":"#6366f1","Redactando":"#fbbf24","Listo":"#c084fc","Publicado":"#4ade80"};
+const IDEAS_POR_NICHO={
+  "Clínicas":["¿Cuánto pierde tu clínica por cada inasistencia? Así lo resolvemos","De agenda en papel a sistema digital: caso real en 7 días","3 razones por las que los pacientes no vuelven (y cómo evitarlo con IA)"],
+  "Psicólogos":["Gestiona fichas, sesiones y cobros desde un solo lugar","¿Cuánto tiempo pierdes en tareas admin que no son terapia?","Confidencialidad + digitalización: sí es posible"],
+  "Gimnasios":["El error que hace perder socios cada mes (y cómo evitarlo)","Cobranza automática = cero llamadas incómodas","De 50 a 200 socios sin contratar más staff"],
+  "Restaurantes":["Reservas online + control de insumos en un solo sistema","¿Cuánto inventario se pierde sin un sistema? Los números sorprenden","El restaurante que digitalizó en una semana: así quedó"],
+  "Estética":["Agenda llena, sin llamadas: así funciona el bot de citas","Historial de tratamientos que te hace ver profesional","Fidelización automática: cumpleaños, recordatorios y promos"],
+  "Retail":["Tienda Armario: cuenta corriente digital para todas las clientas","Cuentas corrientes manuales → sistema digital en 3 días","Tu cliente siempre sabe lo que debe: portal de cuenta corriente"],
+  "Bot WhatsApp":["Tu negocio atendiendo a las 3am: así funciona el bot de IA","Del mensaje a la cita agendada: 0 intervención humana","Bot + memoria: recuerda a cada cliente como si lo conocieras"],
+  "Landing Page":["Tu web + tu ERP conectados: cada visita entra al CRM","De Instagram a web propia: así se ve en 7 días","Landing que convierte vs landing que solo informa"],
+};
  
 /* ═══════════════════════════════════════════ */
 /* ═══ MAIN APP COMPONENT                 ═══ */
@@ -151,6 +176,27 @@ export default function FluxiaApp() {
   const [ldName,setLdName]=useState("");const[ldService,setLdService]=useState("");const[ldSrc,setLdSrc]=useState("WhatsApp");const[ldStatus,setLdStatus]=useState("warm");
   const [addingInvoice,setAddingInvoice]=useState(false);
   const [invMonth,setInvMonth]=useState("");const[invAmount,setInvAmount]=useState("");
+  // Contenido
+  const [addingContent,setAddingContent]=useState(false);
+  const [ctNiche,setCtNiche]=useState("Clínicas");const[ctTitle,setCtTitle]=useState("");
+  const [ctPlatform,setCtPlatform]=useState("Instagram");const[ctType,setCtType]=useState("Post");const[ctCol,setCtCol]=useState("Idea");
+  const [selectedContent,setSelectedContent]=useState(null);
+  // Trading
+  const [tradingTab,setTradingTab]=useState("bootcamp");
+  const [addingTrade,setAddingTrade]=useState(false);
+  const [trPair,setTrPair]=useState("EUR/USD");
+  const [trDir,setTrDir]=useState("long");
+  const [trEntry,setTrEntry]=useState("");
+  const [trSL,setTrSL]=useState("");
+  const [trTP,setTrTP]=useState("");
+  const [trResult,setTrResult]=useState("");
+  const [trStatus,setTrStatus]=useState("win");
+  const [trSetup,setTrSetup]=useState("IFVG");
+  const [trNotes,setTrNotes]=useState("");
+  const [calcCapital,setCalcCapital]=useState("10000");
+  const [calcRiskPct,setCalcRiskPct]=useState("1");
+  const [calcEntry,setCalcEntry]=useState("");
+  const [calcSL,setCalcSL]=useState("");
  
   useEffect(()=>{
     Promise.all([loadStore(),loadAuth()]).then(([d])=>{
@@ -211,6 +257,63 @@ export default function FluxiaApp() {
     </div>;
   };
  
+  /* ═══════════════════════════════════ */
+  /* ═══ CONTENT PANEL              ═══ */
+  /* ═══════════════════════════════════ */
+  const ContentPanel = () => {
+    const ct=(data?.content||[]).find(c=>c.id===selectedContent);
+    const [localTitle,setLocalTitle]=useState(ct?.title||"");
+    const [localCopy,setLocalCopy]=useState(ct?.copy||"");
+    const [copied,setCopied]=useState(false);
+    useEffect(()=>{if(ct){setLocalTitle(ct.title||"");setLocalCopy(ct.copy||"")}},[selectedContent]);
+    if(!ct)return null;
+    const demo=DEMOS_CATALOG.find(d=>d.niche===ct.niche);
+    const curCol=ct.col||"Idea";
+    const nextColIdx=CONT_COLS.indexOf(curCol)+1;
+    const nextCol=nextColIdx<CONT_COLS.length?CONT_COLS[nextColIdx]:null;
+    const save=()=>up(d=>{const c2=(d.content||[]).find(x=>x.id===ct.id);if(c2){c2.title=localTitle;c2.copy=localCopy}});
+    const copyClip=()=>{navigator.clipboard?.writeText(localCopy||localTitle);setCopied(true);setTimeout(()=>setCopied(false),2000)};
+    return <div style={{position:"fixed",inset:0,zIndex:100,display:"flex",justifyContent:"flex-end"}} onClick={()=>{save();setSelectedContent(null)}}>
+      <div style={{width:440,maxWidth:"92vw",height:"100vh",background:"#0d0d18",borderLeft:`1px solid ${C.bdr}`,padding:"24px 20px",overflowY:"auto",boxShadow:"-8px 0 48px rgba(0,0,0,.6)",display:"flex",flexDirection:"column",gap:12}} onClick={e=>e.stopPropagation()}>
+        {/* Header */}
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            <div style={{width:34,height:34,borderRadius:9,background:`${demo?.color||C.vi}15`,border:`1px solid ${demo?.color||C.vi}25`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:17}}>{demo?.icon||"📄"}</div>
+            <div><div style={{fontSize:13,fontWeight:600,color:demo?.color||C.vi}}>{ct.niche}</div><div style={{fontSize:10,color:C.t3}}>{ct.type} · {ct.platform}</div></div>
+          </div>
+          <button onClick={()=>{save();setSelectedContent(null)}} style={{background:"none",border:"none",color:C.t3,fontSize:22,cursor:"pointer",lineHeight:1}}>×</button>
+        </div>
+        {/* Progress bar de columnas */}
+        <div style={{display:"flex",gap:3}}>
+          {CONT_COLS.map(col=><div key={col} style={{flex:1,textAlign:"center",padding:"5px 0",borderRadius:7,background:curCol===col?`${CONT_COL_C[col]}22`:"transparent",border:curCol===col?`1px solid ${CONT_COL_C[col]}60`:`1px solid ${C.bdr}`,fontSize:10,color:curCol===col?CONT_COL_C[col]:C.t3,fontWeight:curCol===col?600:400,cursor:"pointer",transition:"all .15s"}} onClick={()=>up(d=>{const c2=(d.content||[]).find(x=>x.id===ct.id);if(c2)c2.col=col})}>{col}</div>)}
+        </div>
+        {/* Título */}
+        <div>
+          <label style={{display:"block",fontSize:11,color:C.t2,marginBottom:4,fontWeight:500}}>Título / hook</label>
+          <textarea value={localTitle} onChange={e=>setLocalTitle(e.target.value)} rows={2} style={{width:"100%",padding:"10px 14px",background:"rgba(255,255,255,.04)",border:`1px solid ${C.bdr}`,borderRadius:9,color:C.t1,fontSize:13,outline:"none",fontFamily:"inherit",resize:"none",boxSizing:"border-box",lineHeight:1.5}} onFocus={e=>e.target.style.borderColor="rgba(139,92,246,.5)"} onBlur={e=>{e.target.style.borderColor=C.bdr;save()}}/>
+        </div>
+        {/* Copy */}
+        <div style={{flex:1,display:"flex",flexDirection:"column"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+            <label style={{fontSize:11,color:C.t2,fontWeight:500}}>Copy del post</label>
+            <button onClick={copyClip} style={{fontSize:10,padding:"3px 12px",borderRadius:6,border:`1px solid ${copied?C.green:C.bdr}`,background:"transparent",color:copied?C.green:C.t2,cursor:"pointer",fontFamily:"inherit",transition:"all .2s"}}>{copied?"✓ Copiado":"Copiar texto"}</button>
+          </div>
+          <textarea value={localCopy} onChange={e=>setLocalCopy(e.target.value)} placeholder="Escribe el texto completo del post aquí..." rows={9} style={{flex:1,width:"100%",padding:"10px 14px",background:"rgba(255,255,255,.04)",border:`1px solid ${C.bdr}`,borderRadius:9,color:C.t1,fontSize:12,outline:"none",fontFamily:"inherit",resize:"vertical",lineHeight:1.65,boxSizing:"border-box"}} onFocus={e=>e.target.style.borderColor="rgba(139,92,246,.5)"} onBlur={e=>{e.target.style.borderColor=C.bdr;save()}}/>
+        </div>
+        {/* Ideas si no hay copy */}
+        {localCopy.length<10&&IDEAS_POR_NICHO[ct.niche]&&<div>
+          <div style={{fontSize:11,color:C.t3,marginBottom:5}}>💡 Ideas para arrancar (clic para usar):</div>
+          {IDEAS_POR_NICHO[ct.niche].map((idea,i)=><button key={i} onClick={()=>setLocalCopy(idea)} style={{display:"block",width:"100%",textAlign:"left",padding:"7px 10px",marginBottom:4,background:"rgba(255,255,255,.02)",border:`1px solid ${C.bdr}`,borderRadius:7,color:C.t2,fontSize:11,cursor:"pointer",fontFamily:"inherit",lineHeight:1.5,transition:"all .15s"}} onMouseEnter={e=>{e.currentTarget.style.borderColor=demo?.color||C.vi;e.currentTarget.style.color=C.t1}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.bdr;e.currentTarget.style.color=C.t2}}>{idea}</button>)}
+        </div>}
+        {/* Acciones */}
+        <div style={{display:"flex",gap:6,paddingTop:4,borderTop:`1px solid ${C.bdr}`}}>
+          {nextCol&&<Btn primary onClick={()=>{save();up(d=>{const c2=(d.content||[]).find(x=>x.id===ct.id);if(c2)c2.col=nextCol});setSelectedContent(null)}}>→ Mover a {nextCol}</Btn>}
+          <Btn onClick={()=>{save();setSelectedContent(null)}}>Guardar y cerrar</Btn>
+        </div>
+      </div>
+    </div>;
+  };
+
   /* ═══════════════════════════════════ */
   /* ═══ LANDING PAGE               ═══ */
   /* ═══════════════════════════════════ */
@@ -346,7 +449,7 @@ export default function FluxiaApp() {
   const mrr=clients.reduce((s,c)=>s+(c.mrr||0),0);
   const pipeVal=pipeline.filter(d=>d.col!=="Activo").reduce((s,d)=>s+(d.value||0),0);
   const ft=filterPhase==="all"?tasks:tasks.filter(t=>t.phase===filterPhase);
-  const NAV=[{id:"kanban",icon:"▦",l:"Kanban"},{id:"pipeline",icon:"◈",l:"Pipeline"},{id:"clients",icon:"◎",l:"Clientes"},{id:"metrics",icon:"▤",l:"Métricas"}];
+  const NAV=[{id:"kanban",icon:"▦",l:"Kanban"},{id:"pipeline",icon:"◈",l:"Pipeline"},{id:"clients",icon:"◎",l:"Clientes"},{id:"metrics",icon:"▤",l:"Métricas"},{id:"contenido",icon:"✦",l:"Contenido"},{id:"trading",icon:"◉",l:"Trading"}];
  
   return (
     <div style={{fontFamily:"'DM Sans',system-ui,sans-serif",background:C.bg,color:C.t1,minHeight:"100vh",display:"flex"}}>
@@ -548,6 +651,196 @@ export default function FluxiaApp() {
           </>}
         </>}
  
+        {/* CONTENIDO */}
+        {page==="contenido"&&<>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+            <div><h1 style={{fontSize:20,fontWeight:700,margin:0}}>Demos & Contenido</h1><p style={{fontSize:11,color:C.t3,margin:"3px 0 0"}}>Catálogo de demos por nicho · pipeline de publicaciones</p></div>
+            <Btn primary onClick={()=>setAddingContent(true)}>+ Nueva pieza</Btn>
+          </div>
+          <div style={{display:"flex",gap:8,marginBottom:14,flexWrap:"wrap"}}>
+            <Stat label="Demos listos" value={DEMOS_CATALOG.filter(d=>d.status==="construido").length} color={C.green} sub="para mostrar"/>
+            <Stat label="En desarrollo" value={DEMOS_CATALOG.filter(d=>d.status==="en progreso").length} color={C.gold}/>
+            {CONT_COLS.map(col=>{const n=(data?.content||[]).filter(c=>(c.col||"Idea")===col).length;return n>0?<Stat key={col} label={col} value={n} color={CONT_COL_C[col]}/>:null})}
+          </div>
+
+          {addingContent&&<Card style={{marginBottom:14,maxWidth:540}}>
+            <div style={{fontSize:13,fontWeight:600,color:C.t1,marginBottom:10}}>Nueva pieza de contenido</div>
+            <div style={{marginBottom:8}}>
+              <label style={{display:"block",fontSize:11,color:C.t2,marginBottom:4}}>Nicho</label>
+              <div style={{display:"flex",gap:3,flexWrap:"wrap"}}>{DEMOS_CATALOG.map(d=><button key={d.niche} onClick={()=>setCtNiche(d.niche)} style={{fontSize:10,padding:"3px 8px",borderRadius:5,border:ctNiche===d.niche?`1px solid ${d.color}`:`1px solid ${C.bdr}`,background:ctNiche===d.niche?`${d.color}18`:"transparent",color:ctNiche===d.niche?d.color:C.t2,cursor:"pointer",fontFamily:"inherit"}}>{d.icon} {d.niche}</button>)}</div>
+            </div>
+            {IDEAS_POR_NICHO[ctNiche]&&<div style={{marginBottom:8}}>
+              <label style={{display:"block",fontSize:11,color:C.t3,marginBottom:5}}>💡 Ideas para {ctNiche} (clic para usar):</label>
+              {IDEAS_POR_NICHO[ctNiche].map((idea,i)=><button key={i} onClick={()=>setCtTitle(idea)} style={{display:"block",width:"100%",textAlign:"left",padding:"6px 9px",marginBottom:3,background:ctTitle===idea?"rgba(139,92,246,.1)":"rgba(255,255,255,.02)",border:ctTitle===idea?`1px solid ${C.vi}`:`1px solid ${C.bdr}`,borderRadius:6,color:ctTitle===idea?C.vi:C.t2,fontSize:11,cursor:"pointer",fontFamily:"inherit",lineHeight:1.4,transition:"all .15s"}}>{idea}</button>)}
+            </div>}
+            <Input value={ctTitle} onChange={setCtTitle} placeholder="O escribe tu propio título..." style={{marginBottom:8}}/>
+            <div style={{display:"flex",gap:10,marginBottom:8,flexWrap:"wrap"}}>
+              <div><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:4}}>Plataforma</label><div style={{display:"flex",gap:3,flexWrap:"wrap"}}>{Object.entries(platC).map(([p,c])=><button key={p} onClick={()=>setCtPlatform(p)} style={{fontSize:10,padding:"3px 8px",borderRadius:5,border:ctPlatform===p?`1px solid ${c}`:`1px solid ${C.bdr}`,background:ctPlatform===p?`${c}15`:"transparent",color:ctPlatform===p?c:C.t2,cursor:"pointer",fontFamily:"inherit"}}>{p}</button>)}</div></div>
+              <div><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:4}}>Tipo</label><div style={{display:"flex",gap:3,flexWrap:"wrap"}}>{["Post","Carrusel","Reel","Historia","Artículo"].map(t=><button key={t} onClick={()=>setCtType(t)} style={{fontSize:10,padding:"3px 8px",borderRadius:5,border:ctType===t?`1px solid ${C.vi}`:`1px solid ${C.bdr}`,background:ctType===t?"rgba(139,92,246,.12)":"transparent",color:ctType===t?C.vi:C.t2,cursor:"pointer",fontFamily:"inherit"}}>{t}</button>)}</div></div>
+            </div>
+            <div style={{marginBottom:10}}>
+              <label style={{display:"block",fontSize:11,color:C.t2,marginBottom:4}}>Columna inicial</label>
+              <div style={{display:"flex",gap:4}}>{CONT_COLS.map(col=><button key={col} onClick={()=>setCtCol(col)} style={{fontSize:10,padding:"3px 10px",borderRadius:5,border:ctCol===col?`1px solid ${CONT_COL_C[col]}`:`1px solid ${C.bdr}`,background:ctCol===col?`${CONT_COL_C[col]}15`:"transparent",color:ctCol===col?CONT_COL_C[col]:C.t2,cursor:"pointer",fontFamily:"inherit"}}>{col}</button>)}</div>
+            </div>
+            <div style={{display:"flex",gap:6}}><Btn primary onClick={()=>{if(ctTitle.trim()){up(d=>{(d.content=d.content||[]).push({id:`ct${d.nid++}`,niche:ctNiche,title:ctTitle.trim(),copy:"",platform:ctPlatform,type:ctType,col:ctCol,date:new Date().toLocaleDateString("es-CL",{day:"2-digit",month:"short"})})});setCtTitle("");setCtCol("Idea");setAddingContent(false)}}}>Crear</Btn><Btn onClick={()=>{setAddingContent(false);setCtTitle("")}}>Cancelar</Btn></div>
+          </Card>}
+
+          <details style={{marginBottom:14}}>
+            <summary style={{fontSize:11,color:C.t2,fontWeight:600,textTransform:"uppercase",letterSpacing:.5,cursor:"pointer",userSelect:"none",listStyle:"none",display:"flex",alignItems:"center",gap:6,paddingBottom:2}}>
+              <span>▸</span> Catálogo de demos — {DEMOS_CATALOG.filter(d=>d.status==="construido").length} listos · {DEMOS_CATALOG.filter(d=>d.status==="en progreso").length} en progreso
+            </summary>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(210px,1fr))",gap:8,marginTop:10}}>
+              {DEMOS_CATALOG.map(dm=>{
+                const piezas=(data?.content||[]).filter(c=>c.niche===dm.niche).length;
+                const stMap={construido:{c:C.green,l:"Listo"},"en progreso":{c:C.gold,l:"En progreso"},pendiente:{c:C.t3,l:"Pendiente"}};
+                const st=stMap[dm.status]||stMap.pendiente;
+                return <div key={dm.id} style={{background:C.bg2,border:`1px solid ${C.bdr}`,borderRadius:11,padding:"12px",position:"relative",overflow:"hidden",transition:"border-color .2s"}} onMouseEnter={e=>e.currentTarget.style.borderColor=`${dm.color}50`} onMouseLeave={e=>e.currentTarget.style.borderColor=C.bdr}>
+                  <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:`linear-gradient(90deg,${dm.color},${dm.color}20)`}}/>
+                  <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:7}}><span style={{fontSize:18}}>{dm.icon}</span><div><div style={{fontSize:12,fontWeight:600,color:C.t1}}>{dm.niche}</div><div style={{fontSize:10,color:C.t3}}>{dm.demo}</div></div></div>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                    <span style={{fontSize:9,fontWeight:600,color:st.c,background:`${st.c}12`,padding:"2px 7px",borderRadius:5}}>● {st.l}</span>
+                    <div style={{display:"flex",gap:5,alignItems:"center"}}><span style={{fontSize:10,color:C.t3}}>{piezas} piezas</span><button onClick={()=>{setCtNiche(dm.niche);setAddingContent(true)}} style={{fontSize:11,padding:"1px 8px",borderRadius:5,border:`1px solid ${dm.color}40`,background:"transparent",color:dm.color,cursor:"pointer",fontFamily:"inherit",lineHeight:1.6}}>+</button></div>
+                  </div>
+                </div>
+              })}
+            </div>
+          </details>
+
+          <div style={{fontSize:11,color:C.t2,fontWeight:600,textTransform:"uppercase",letterSpacing:.5,marginBottom:10}}>Pipeline de publicaciones</div>
+          {(data?.content||[]).length===0
+            ?<div style={{textAlign:"center",padding:"52px 0",color:C.t3}}>
+              <div style={{fontSize:36,marginBottom:12,opacity:.4}}>✦</div>
+              <div style={{fontSize:13,marginBottom:4}}>Sin piezas de contenido aún</div>
+              <div style={{fontSize:12}}>Crea la primera con <span style={{color:C.vi,cursor:"pointer"}} onClick={()=>setAddingContent(true)}>+ Nueva pieza</span></div>
+            </div>
+            :<div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
+              {CONT_COLS.map(col=>{
+                const colItems=(data?.content||[]).filter(c=>(c.col||"Idea")===col);
+                const colC2=CONT_COL_C[col];
+                const nextIdx=CONT_COLS.indexOf(col)+1;
+                return <div key={col}>
+                  <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:8,padding:"0 2px"}}>
+                    <div style={{width:7,height:7,borderRadius:"50%",background:colC2,boxShadow:`0 0 6px ${colC2}60`}}/>
+                    <span style={{fontSize:12,fontWeight:600,color:C.t1}}>{col}</span>
+                    <span style={{fontSize:10,color:C.t3,background:"rgba(255,255,255,.05)",padding:"1px 6px",borderRadius:8,marginLeft:2}}>{colItems.length}</span>
+                  </div>
+                  <div style={{minHeight:80}}>
+                    {colItems.map(ct=>{
+                      const demo=DEMOS_CATALOG.find(d=>d.niche===ct.niche);
+                      const plc=platC[ct.platform]||C.t2;
+                      return <div key={ct.id} style={{background:C.bg2,border:`1px solid ${C.bdr}`,borderRadius:10,padding:"10px 11px",marginBottom:6,cursor:"pointer",transition:"all .15s"}} onClick={()=>setSelectedContent(ct.id)} onMouseEnter={e=>{e.currentTarget.style.background=C.bg3;e.currentTarget.style.borderColor=C.bdrH}} onMouseLeave={e=>{e.currentTarget.style.background=C.bg2;e.currentTarget.style.borderColor=C.bdr}}>
+                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}}>
+                          <span style={{fontSize:16,lineHeight:1}}>{demo?.icon||"📄"}</span>
+                          <div style={{display:"flex",gap:2}}>
+                            {nextIdx<CONT_COLS.length&&<button onClick={e=>{e.stopPropagation();up(d=>{const c2=(d.content||[]).find(x=>x.id===ct.id);if(c2)c2.col=CONT_COLS[nextIdx]})}} title={`→ ${CONT_COLS[nextIdx]}`} style={{background:"none",border:"none",color:C.t3,cursor:"pointer",fontSize:12,padding:"0 2px",lineHeight:1}}>→</button>}
+                            <button onClick={e=>{e.stopPropagation();up(d=>{d.content=(d.content||[]).filter(x=>x.id!==ct.id)})}} style={{background:"none",border:"none",color:C.t3,cursor:"pointer",fontSize:15,padding:"0 2px",lineHeight:1}} onMouseEnter={e=>e.currentTarget.style.color=C.red} onMouseLeave={e=>e.currentTarget.style.color=C.t3}>×</button>
+                          </div>
+                        </div>
+                        <div style={{fontSize:11,fontWeight:500,color:C.t1,lineHeight:1.4,marginBottom:5}}>{ct.title}</div>
+                        {ct.copy&&<div style={{fontSize:10,color:C.t3,lineHeight:1.4,overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",marginBottom:5}}>{ct.copy}</div>}
+                        <div style={{display:"flex",gap:4,alignItems:"center",flexWrap:"wrap"}}>
+                          <span style={{fontSize:9,color:plc,fontWeight:600,background:`${plc}12`,padding:"1px 6px",borderRadius:4}}>{ct.platform}</span>
+                          <span style={{fontSize:9,color:C.t3}}>{ct.type}</span>
+                          {ct.copy&&ct.copy.length>10&&<span style={{fontSize:9,color:C.green,marginLeft:"auto"}}>✓ copy</span>}
+                        </div>
+                      </div>
+                    })}
+                  </div>
+                </div>
+              })}
+            </div>
+          }
+          {selectedContent&&<ContentPanel/>}
+        </>}
+
+        {/* TRADING */}
+        {page==="trading"&&<>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14,flexWrap:"wrap",gap:8}}>
+            <div><h1 style={{fontSize:20,fontWeight:700,margin:0}}>Trading Lab</h1><p style={{fontSize:11,color:C.t3,margin:"3px 0 0"}}>Bootcamp Fede Esses · Diario de trades · Calculadora de riesgo</p></div>
+            {tradingTab==="diario"&&<Btn primary onClick={()=>setAddingTrade(true)}>+ Registrar trade</Btn>}
+          </div>
+          {(()=>{const trd=data?.trades||[];const wins=trd.filter(t=>t.status==="win");const totalPL=trd.reduce((s,t)=>s+(t.result||0),0);const winRate=trd.length>0?Math.round(wins.length/trd.length*100):0;const rrTrades=trd.filter(t=>t.rr>0);const avgRR=rrTrades.length>0?(rrTrades.reduce((s,t)=>s+(t.rr||0),0)/rrTrades.length).toFixed(1):0;const completed=Object.values(data?.bootcamp||{}).filter(d=>d.status==="completado").length;return <div style={{display:"flex",gap:8,marginBottom:14,flexWrap:"wrap"}}><Stat label="Días completados" value={`${completed}/50`} color={C.green} sub="del bootcamp"/><Stat label="Trades" value={trd.length} sub={`${wins.length}G · ${trd.length-wins.length}P`}/><Stat label="Win rate" value={`${winRate}%`} color={winRate>=50?C.green:C.red}/><Stat label="R:R prom." value={`${avgRR}R`} color={C.vi}/><Stat label="P&L total" value={`${totalPL>=0?"+":""}${totalPL}$`} color={totalPL>=0?C.green:C.red} sub="USD simulado"/></div>})()}
+          <div style={{display:"flex",gap:2,marginBottom:18,borderBottom:`1px solid ${C.bdr}`}}>
+            {[["bootcamp","📚 Bootcamp"],["diario","📓 Diario"],["calc","🧮 Calculadora"],["stats","📊 Stats"]].map(([tid,tl])=><button key={tid} onClick={()=>setTradingTab(tid)} style={{padding:"8px 16px",fontSize:12,fontWeight:500,border:"none",borderBottom:tradingTab===tid?`2px solid ${C.vi}`:"2px solid transparent",background:"none",color:tradingTab===tid?C.t1:C.t2,cursor:"pointer",fontFamily:"inherit"}}>{tl}</button>)}
+          </div>
+
+          {tradingTab==="bootcamp"&&<>
+            <div style={{marginBottom:12}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+                <span style={{fontSize:13,fontWeight:600,color:C.t1}}>Progreso del bootcamp — Fede Esses</span>
+                <a href="https://www.youtube.com/playlist?list=PL4hId-DTkHg50047_yeFJOvPK1rOCrSoR" target="_blank" rel="noopener noreferrer" style={{fontSize:11,color:C.vi,textDecoration:"none"}}>▶ Ver en YouTube →</a>
+              </div>
+              {(()=>{const comp=Object.values(data?.bootcamp||{}).filter(d=>d.status==="completado").length;const pct=Math.round(comp/50*100);return <div><div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:C.t2,marginBottom:4}}><span>{comp} / 50 días completados</span><span style={{color:C.green,fontWeight:600}}>{pct}%</span></div><div style={{height:6,background:"rgba(255,255,255,.06)",borderRadius:4}}><div style={{height:"100%",width:`${pct}%`,background:`linear-gradient(90deg,${C.vi},${C.green})`,borderRadius:4,transition:"width .5s"}}/></div></div>})()}
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(165px,1fr))",gap:6}}>
+              {Array.from({length:50},(_,i)=>i+1).map(day=>{
+                const bd=(data?.bootcamp||{})[day]||{status:"pendiente",notes:""};
+                const sC={pendiente:C.t3,viendo:C.gold,completado:C.green}[bd.status];
+                const sI={pendiente:"○",viendo:"◑",completado:"●"}[bd.status];
+                const titles={1:"Arranca Ahora",2:"¿Qué es el trading?",3:"Categorías de trading",4:"Entendiendo los mercados",5:"Herramientas y plataformas",6:"Cómo leer un gráfico",7:"Tipos de órdenes",8:"Estructura de mercado",9:"Máximos y mínimos",10:"Tendencias y rangos",11:"Zonas de soporte/resistencia",12:"Velas japonesas",13:"SMC: Smart Money Concepts",14:"Liquidity y sweeps",15:"Fair Value Gap (FVG)",16:"IFVG: Inverse FVG",17:"Modelo de trading IFVG",18:"Confirmaciones de entrada",19:"Stop Loss y Take Profit",20:"Risk Management básico",21:"Gestión de capital",22:"Calculadora de posición",23:"Broker y plataforma",24:"TradingView básico",25:"TradingView avanzado",26:"Sesiones del mercado Forex",27:"Correlaciones de pares",28:"Análisis fundamental básico",29:"Noticias y su impacto",30:"Psicología del trader",31:"Errores comunes",32:"Diario de trading",33:"Reglas de trading",34:"Proceso de mejora",35:"Revisión de semana",36:"Cómo hacer backtesting",37:"Backtesting manual",38:"Ejemplos de backtesting",39:"Métricas de rendimiento",40:"Optimizando la estrategia",41:"Backtesting futuros",42:"Forward testing",43:"Demo trading",44:"Pasando a real",45:"Gestión emocional",46:"Racha perdedora",47:"Scaling de cuenta",48:"Consistencia",49:"Rutina del trader",50:"Cierre del bootcamp"};
+                return <div key={day} style={{background:C.bg2,border:`1px solid ${bd.status==="completado"?C.green+"40":C.bdr}`,borderRadius:10,padding:"10px 12px",cursor:"pointer",transition:"all .15s"}} onClick={()=>{const sts=["pendiente","viendo","completado"];const cur=sts.indexOf(bd.status);up(dt=>{if(!dt.bootcamp)dt.bootcamp={};if(!dt.bootcamp[day])dt.bootcamp[day]={status:"pendiente",notes:""};dt.bootcamp[day].status=sts[(cur+1)%3]})}} onMouseEnter={e=>{e.currentTarget.style.borderColor=`${sC}80`;e.currentTarget.style.background=C.bg3}} onMouseLeave={e=>{e.currentTarget.style.borderColor=bd.status==="completado"?C.green+"40":C.bdr;e.currentTarget.style.background=C.bg2}}>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:3}}>
+                    <span style={{fontSize:10,color:C.t3,fontWeight:600}}>Día {day}</span>
+                    <span style={{color:sC,fontSize:14}}>{sI}</span>
+                  </div>
+                  <div style={{fontSize:11,color:bd.status==="completado"?C.t1:C.t2,fontWeight:bd.status==="completado"?500:400,lineHeight:1.3}}>{titles[day]}</div>
+                </div>
+              })}
+            </div>
+            <div style={{marginTop:10,fontSize:11,color:C.t3,textAlign:"center"}}>Clic en cada día para ciclar: ○ Pendiente → ◑ Viendo → ● Completado</div>
+          </>}
+
+          {tradingTab==="diario"&&<>
+            {addingTrade&&<Card style={{marginBottom:14,maxWidth:580}}>
+              <div style={{fontSize:13,fontWeight:600,color:C.t1,marginBottom:10}}>Registrar trade (paper trading)</div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:8}}>
+                <div><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:4}}>Par de divisas</label><div style={{display:"flex",gap:3,flexWrap:"wrap"}}>{["EUR/USD","GBP/USD","USD/JPY","XAU/USD","NAS100"].map(p=><button key={p} onClick={()=>setTrPair(p)} style={{fontSize:10,padding:"3px 7px",borderRadius:5,border:trPair===p?`1px solid ${C.vi}`:`1px solid ${C.bdr}`,background:trPair===p?"rgba(139,92,246,.12)":"transparent",color:trPair===p?C.vi:C.t2,cursor:"pointer",fontFamily:"inherit"}}>{p}</button>)}</div></div>
+                <div><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:4}}>Dirección</label><div style={{display:"flex",gap:6}}><button onClick={()=>setTrDir("long")} style={{flex:1,padding:"7px",borderRadius:7,border:trDir==="long"?`1px solid ${C.green}`:`1px solid ${C.bdr}`,background:trDir==="long"?"rgba(74,222,128,.1)":"transparent",color:trDir==="long"?C.green:C.t2,cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:600}}>▲ Long</button><button onClick={()=>setTrDir("short")} style={{flex:1,padding:"7px",borderRadius:7,border:trDir==="short"?`1px solid ${C.red}`:`1px solid ${C.bdr}`,background:trDir==="short"?"rgba(239,68,68,.1)":"transparent",color:trDir==="short"?C.red:C.t2,cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:600}}>▼ Short</button></div></div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:6,marginBottom:8}}>
+                <div><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:3}}>Entrada</label><Input value={trEntry} onChange={setTrEntry} placeholder="1.0850" type="number"/></div>
+                <div><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:3}}>Stop Loss</label><Input value={trSL} onChange={setTrSL} placeholder="1.0820" type="number"/></div>
+                <div><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:3}}>Take Profit</label><Input value={trTP} onChange={setTrTP} placeholder="1.0910" type="number"/></div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:8}}>
+                <div><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:4}}>Estado final</label><div style={{display:"flex",gap:4}}>{[["win","✓ Win",C.green],["loss","✗ Loss",C.red],["be","= BE",C.gold]].map(([v,l,c])=><button key={v} onClick={()=>setTrStatus(v)} style={{flex:1,padding:"6px",borderRadius:6,border:trStatus===v?`1px solid ${c}`:`1px solid ${C.bdr}`,background:trStatus===v?`${c}18`:"transparent",color:trStatus===v?c:C.t2,cursor:"pointer",fontFamily:"inherit",fontSize:11,fontWeight:600}}>{l}</button>)}</div></div>
+                <div><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:3}}>P&L USD (simulado)</label><Input value={trResult} onChange={setTrResult} placeholder="Ej: 120 o -60" type="number"/></div>
+              </div>
+              <div style={{marginBottom:8}}><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:4}}>Setup utilizado</label><div style={{display:"flex",gap:3,flexWrap:"wrap"}}>{["IFVG","FVG","MSS","BOS","OB","Otro"].map(s=><button key={s} onClick={()=>setTrSetup(s)} style={{fontSize:10,padding:"3px 8px",borderRadius:5,border:trSetup===s?`1px solid ${C.vi}`:`1px solid ${C.bdr}`,background:trSetup===s?"rgba(139,92,246,.12)":"transparent",color:trSetup===s?C.vi:C.t2,cursor:"pointer",fontFamily:"inherit"}}>{s}</button>)}</div></div>
+              <Input value={trNotes} onChange={setTrNotes} placeholder="Notas opcionales sobre el trade..." style={{marginBottom:8}}/>
+              <div style={{display:"flex",gap:6}}><Btn primary onClick={()=>{if(trEntry&&trSL){const en=parseFloat(trEntry),sl=parseFloat(trSL),tp=parseFloat(trTP||"0");const risk=Math.abs(en-sl);const reward=tp?Math.abs(tp-en):0;const rr=risk>0&&reward>0?parseFloat((reward/risk).toFixed(1)):0;up(d=>{(d.trades=d.trades||[]).push({id:`tr${d.nid++}`,date:new Date().toLocaleDateString("es-CL",{day:"2-digit",month:"short",year:"numeric"}),pair:trPair,dir:trDir,entry:en,sl,tp:tp||null,result:parseFloat(trResult)||0,status:trStatus,setup:trSetup,rr,notes:trNotes})});setTrEntry("");setTrSL("");setTrTP("");setTrResult("");setTrNotes("");setAddingTrade(false)}}}>Guardar trade</Btn><Btn onClick={()=>{setAddingTrade(false);setTrEntry("");setTrSL("");setTrTP("");setTrResult("");setTrNotes("")}}>Cancelar</Btn></div>
+            </Card>}
+            {(data?.trades||[]).length===0&&!addingTrade
+              ?<div style={{textAlign:"center",padding:"52px 0",color:C.t3}}><div style={{fontSize:36,marginBottom:12,opacity:.4}}>📓</div><div style={{fontSize:13,marginBottom:4}}>Sin trades registrados aún</div><div style={{fontSize:12,marginBottom:12}}>Practica con paper trading (sin dinero real) mientras estudias el bootcamp</div><button onClick={()=>setAddingTrade(true)} style={{fontSize:12,color:C.vi,background:"none",border:`1px solid ${C.vi}`,padding:"7px 18px",borderRadius:8,cursor:"pointer",fontFamily:"inherit"}}>+ Registrar primer trade</button></div>
+              :<div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}><thead><tr>{["Fecha","Par","Dir","Entrada","SL","TP","R:R","Setup","P&L","Estado",""].map(h=><th key={h} style={{textAlign:"left",padding:"8px 10px",borderBottom:`1px solid ${C.bdr}`,fontSize:10,fontWeight:600,color:C.t3,letterSpacing:.5,textTransform:"uppercase",whiteSpace:"nowrap"}}>{h}</th>)}</tr></thead><tbody>{[...(data?.trades||[])].reverse().map(t=>{const dC=t.dir==="long"?C.green:C.red;const sC2={win:C.green,loss:C.red,be:C.gold}[t.status];return <tr key={t.id} style={{borderBottom:`1px solid ${C.bdr}`}} onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,.02)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}><td style={{padding:"9px 10px",color:C.t3,whiteSpace:"nowrap"}}>{t.date}</td><td style={{padding:"9px 10px",fontWeight:600,color:C.t1}}>{t.pair}</td><td style={{padding:"9px 10px"}}><span style={{color:dC,fontWeight:700}}>{t.dir==="long"?"▲":"▼"}</span> <span style={{color:dC,fontWeight:600,fontSize:10}}>{t.dir.toUpperCase()}</span></td><td style={{padding:"9px 10px",color:C.t2,fontFamily:"monospace",fontSize:11}}>{t.entry}</td><td style={{padding:"9px 10px",color:C.red,fontFamily:"monospace",fontSize:11}}>{t.sl}</td><td style={{padding:"9px 10px",color:C.green,fontFamily:"monospace",fontSize:11}}>{t.tp||"—"}</td><td style={{padding:"9px 10px",color:C.vi,fontWeight:600}}>{t.rr?`${t.rr}R`:"—"}</td><td style={{padding:"9px 10px"}}><span style={{fontSize:10,color:C.vi,background:"rgba(139,92,246,.1)",padding:"2px 6px",borderRadius:4}}>{t.setup}</span></td><td style={{padding:"9px 10px",fontWeight:700,color:t.result>=0?C.green:C.red}}>{t.result>=0?"+":""}{t.result}$</td><td style={{padding:"9px 10px"}}><span style={{fontSize:10,fontWeight:600,color:sC2,background:`${sC2}15`,padding:"2px 8px",borderRadius:4,textTransform:"uppercase"}}>{t.status}</span></td><td style={{padding:"9px 10px"}}><button onClick={()=>up(d=>{d.trades=d.trades.filter(x=>x.id!==t.id)})} style={{background:"none",border:"none",color:C.t3,cursor:"pointer",fontSize:14,lineHeight:1}} onMouseEnter={e=>e.currentTarget.style.color=C.red} onMouseLeave={e=>e.currentTarget.style.color=C.t3}>×</button></td></tr>})}</tbody></table></div>
+            }
+          </>}
+
+          {tradingTab==="calc"&&<>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:16,maxWidth:780}}>
+              <Card>
+                <div style={{fontSize:13,fontWeight:600,color:C.t1,marginBottom:14}}>Calculadora de tamaño de posición</div>
+                <div style={{marginBottom:10}}><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:4}}>Capital total (USD)</label><Input value={calcCapital} onChange={setCalcCapital} placeholder="10000" type="number"/></div>
+                <div style={{marginBottom:10}}><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:4}}>% Riesgo por trade</label><div style={{display:"flex",gap:4,marginBottom:6}}>{["0.5","1","1.5","2"].map(r=><button key={r} onClick={()=>setCalcRiskPct(r)} style={{flex:1,padding:"7px",borderRadius:6,border:calcRiskPct===r?`1px solid ${C.vi}`:`1px solid ${C.bdr}`,background:calcRiskPct===r?"rgba(139,92,246,.12)":"transparent",color:calcRiskPct===r?C.vi:C.t2,cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:600}}>{r}%</button>)}</div></div>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}}><div><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:4}}>Precio entrada</label><Input value={calcEntry} onChange={setCalcEntry} placeholder="1.0850" type="number"/></div><div><label style={{display:"block",fontSize:11,color:C.t2,marginBottom:4}}>Stop Loss</label><Input value={calcSL} onChange={setCalcSL} placeholder="1.0820" type="number"/></div></div>
+                <div style={{padding:"10px 12px",background:"rgba(139,92,246,.05)",border:`1px solid ${C.vi}20`,borderRadius:8,fontSize:11,color:C.t2,lineHeight:1.6}}>💡 Regla del bootcamp: <span style={{color:C.t1,fontWeight:600}}>nunca arriesgues más del 1-2%</span> de tu capital por trade</div>
+              </Card>
+              <Card>
+                <div style={{fontSize:13,fontWeight:600,color:C.t1,marginBottom:14}}>Resultado</div>
+                {(()=>{const cap=parseFloat(calcCapital)||0;const risk=parseFloat(calcRiskPct)||1;const entry=parseFloat(calcEntry)||0;const sl=parseFloat(calcSL)||0;if(!cap||!entry||!sl||entry===sl)return <div style={{color:C.t3,fontSize:12,textAlign:"center",paddingTop:20}}>Completa los campos para ver el resultado</div>;const riskUSD=cap*(risk/100);const slD=Math.abs(entry-sl);const slPips=Math.round(slD*10000);const pipV=10;const lots=(riskUSD/(slPips*pipV)).toFixed(3);const miniLots=(riskUSD/(slPips*pipV*0.1)).toFixed(2);const microLots=(riskUSD/(slPips*pipV*0.01)).toFixed(1);return <div>{[{l:"Capital en riesgo",v:`$${riskUSD.toFixed(0)} USD`,c:C.gold},{l:"Pips de riesgo (SL)",v:`${slPips} pips`,c:C.t1},{l:"Lotes estándar",v:lots,c:C.vi},{l:"Mini lotes (÷10)",v:miniLots,c:C.t2},{l:"Micro lotes (÷100)",v:microLots,c:C.t2}].map((r,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"10px 0",borderBottom:i<4?`1px solid ${C.bdr}`:"none"}}><span style={{fontSize:12,color:C.t2}}>{r.l}</span><span style={{fontSize:14,fontWeight:700,color:r.c}}>{r.v}</span></div>)}<div style={{marginTop:12,padding:"10px 12px",background:"rgba(74,222,128,.05)",border:`1px solid ${C.green}25`,borderRadius:8}}><div style={{fontSize:10,color:C.green,fontWeight:600,marginBottom:2}}>PARA PRINCIPIANTES</div><div style={{fontSize:11,color:C.t2}}>Usa <span style={{color:C.t1,fontWeight:600}}>{microLots} micro lotes</span>. Con SL de {slPips} pips, arriesgas <span style={{color:C.gold,fontWeight:600}}>${riskUSD.toFixed(0)}</span></div></div></div>})()}
+              </Card>
+            </div>
+            <Card style={{marginTop:12,maxWidth:780}}>
+              <div style={{fontSize:13,fontWeight:600,color:C.t1,marginBottom:10}}>Glosario esencial — Bootcamp Fede Esses</div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))",gap:8}}>
+                {[{t:"IFVG",d:"Inverse Fair Value Gap. Estrategia estrella de Fede. Zona de desequilibrio donde el precio tiende a revertir."},{t:"FVG",d:"Fair Value Gap. Hueco entre velas que el mercado tiende a rellenar. Base del método SMC."},{t:"MSS",d:"Market Structure Shift. Cambio de tendencia. Señal clave para entrar en dirección del nuevo movimiento."},{t:"BOS",d:"Break of Structure. Rotura de máximo o mínimo previo. Confirma la dirección del mercado."},{t:"OB",d:"Order Block. Zona donde instituciones acumulan órdenes. Alta probabilidad de reacción del precio."},{t:"R:R",d:"Risk:Reward. 1:2 = por cada $1 arriesgado buscas $2 de ganancia. Mínimo recomendado: 1:1.5."},{t:"Pip",d:"Mínimo movimiento de precio en Forex. EUR/USD: 1 pip = 0.0001. 10 pips = 0.0010."},{t:"Lote",d:"Unidad de posición. Estándar=100k, Mini=10k, Micro=1k unidades de la divisa base."}].map((g,i)=><div key={i} style={{padding:"10px 12px",background:"rgba(255,255,255,.02)",border:`1px solid ${C.bdr}`,borderRadius:8}}><div style={{fontSize:12,fontWeight:700,color:C.vi,marginBottom:3}}>{g.t}</div><div style={{fontSize:11,color:C.t2,lineHeight:1.5}}>{g.d}</div></div>)}
+              </div>
+            </Card>
+          </>}
+
+          {tradingTab==="stats"&&(()=>{const trd=data?.trades||[];if(trd.length===0)return <div style={{textAlign:"center",padding:"60px 0",color:C.t3}}><div style={{fontSize:36,marginBottom:12,opacity:.4}}>📊</div><div style={{fontSize:13,marginBottom:4}}>Sin estadísticas aún</div><div style={{fontSize:12}}>Registra al menos un trade en el Diario para ver tus métricas</div></div>;const wins=trd.filter(t=>t.status==="win");const losses=trd.filter(t=>t.status==="loss");const winRate=Math.round(wins.length/trd.length*100);const totalPL=trd.reduce((s,t)=>s+(t.result||0),0);const rrT=trd.filter(t=>t.rr>0);const avgRR=rrT.length>0?(rrT.reduce((s,t)=>s+(t.rr||0),0)/rrT.length).toFixed(2):0;const avgW=wins.length>0?(wins.reduce((s,t)=>s+(t.result||0),0)/wins.length).toFixed(0):0;const avgL=losses.length>0?(losses.reduce((s,t)=>s+Math.abs(t.result||0),0)/losses.length).toFixed(0):0;const pf=parseFloat(avgL)>0?((parseFloat(avgW)*wins.length)/(parseFloat(avgL)*losses.length)).toFixed(2):"∞";const bySetup={};trd.forEach(t=>{if(!bySetup[t.setup])bySetup[t.setup]={total:0,wins:0};bySetup[t.setup].total++;if(t.status==="win")bySetup[t.setup].wins++});return <><div style={{display:"flex",gap:8,marginBottom:16,flexWrap:"wrap"}}><Stat label="Total trades" value={trd.length}/><Stat label="Win rate" value={`${winRate}%`} color={winRate>=50?C.green:C.red}/><Stat label="P&L total" value={`${totalPL>=0?"+":""}${totalPL}$`} color={totalPL>=0?C.green:C.red}/><Stat label="R:R prom." value={`${avgRR}R`} color={C.vi}/><Stat label="Profit Factor" value={pf} color={parseFloat(pf)>=1||pf==="∞"?C.green:C.red}/></div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:12,maxWidth:780}}><Card><div style={{fontSize:13,fontWeight:600,marginBottom:10}}>Rendimiento detallado</div>{[{l:"Trades ganados",v:`${wins.length} (${winRate}%)`,c:C.green},{l:"Trades perdidos",v:`${losses.length} (${100-winRate}%)`,c:C.red},{l:"Ganancia promedio",v:`$${avgW}`,c:C.green},{l:"Pérdida promedio",v:`$${avgL}`,c:C.red},{l:"R:R promedio",v:`${avgRR}:1`,c:C.vi}].map((r,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:i<4?`1px solid ${C.bdr}`:"none",fontSize:12}}><span style={{color:C.t2}}>{r.l}</span><span style={{color:r.c,fontWeight:600}}>{r.v}</span></div>)}</Card><Card><div style={{fontSize:13,fontWeight:600,marginBottom:10}}>Efectividad por setup</div>{Object.entries(bySetup).map(([setup,sd])=>{const wr=Math.round(sd.wins/sd.total*100);return <div key={setup} style={{marginBottom:10}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}><span style={{fontSize:11,color:C.vi,fontWeight:600}}>{setup}</span><span style={{fontSize:11,color:wr>=50?C.green:C.red,fontWeight:600}}>{wr}% · {sd.total} trades</span></div><div style={{height:4,background:"rgba(255,255,255,.06)",borderRadius:3}}><div style={{height:"100%",width:`${wr}%`,background:wr>=50?C.green:C.red,borderRadius:3}}/></div></div>})}{Object.keys(bySetup).length===0&&<div style={{fontSize:12,color:C.t3}}>Sin setups registrados</div>}</Card></div></>})()}
+        </>}
+
         {/* METRICS */}
         {page==="metrics"&&<>
           <h1 style={{fontSize:20,fontWeight:700,margin:"0 0 14px"}}>Dashboard CEO</h1>
